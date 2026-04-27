@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name            YouTube downloader
-// @icon            https://raw.githubusercontent.com/madkarmaa/youtube-downloader/main/images/icon.png
-// @namespace       aGkgdGhlcmUgOik=
-// @source          https://github.com/madkarmaa/youtube-downloader
-// @supportURL      https://github.com/madkarmaa/youtube-downloader
-// @updateURL       https://raw.githubusercontent.com/madkarmaa/youtube-downloader/main/script.user.js
-// @downloadURL     https://raw.githubusercontent.com/madkarmaa/youtube-downloader/main/script.user.js
-// @version         3.4.0
-// @description     A simple userscript to download YouTube videos in MAX QUALITY
-// @author          mk_
+// @name            YouTube Download Button
+// @icon            https://raw.githubusercontent.com/shaijyy/ytdlbtn/main/images/icon.png
+// @namespace       c2hhaWp5eS95dGRsYnRuIEAgR0gKTm8gQUkgd2FzIHVzZWQgaW4gdGhlIG1ha2luZyBvZiB0aGlzIFVzZXJTY3JpcHQ=
+// @source          https://github.com/shaijyy/ytdlbtn
+// @supportURL      https://github.com/shaijyy/ytdlbtn
+// @updateURL       https://raw.githubusercontent.com/shaijyy/ytdlbtn/main/script.user.js
+// @downloadURL     https://raw.githubusercontent.com/shaijyy/ytdlbtn/main/script.user.js
+// @version         4.0.0
+// @description     A simple userscript to download YouTube videos in the highest quality available.
+// @author          shaijyy
 // @match           *://*.youtube.com/*
-// @connect         api.cobalt.tools
+// @connect         COBALT INSTANCE API
 // @connect         raw.githubusercontent.com
 // @grant           GM_info
 // @grant           GM_addStyle
@@ -19,8 +19,13 @@
 // @run-at          document-start
 // ==/UserScript==
 
+// idk what unc made ts before i came in to the party, but credits mostly go to him ig
+// also check out my no-AI policy on github, yes, no AI was used in the making (editing) of this UserScript.
+
 (async () => {
     'use strict'; // prettier-ignore
+
+    console.log("[YOUTUBEDOWNLOADER YTDL YTDLBTN] USERSCRIPT LOADED")
 
     // abort if not on youtube or youtube music or if in an iframe
     if (!detectYoutubeService() || window !== window.parent) return;
@@ -53,7 +58,6 @@
     };
     let videoDataReady = false;
 
-    // https://github.com/imputnet/cobalt/blob/current/docs/api.md#request-body-variables
     const QUALITIES = {
         MAX: 'max',
         '2160p': '2160',
@@ -75,24 +79,27 @@
         else if (level.toLowerCase() === 'error') oldELog.apply(console, ['%c[YTDL]', 'color: #f00;', ...args]);
     }
 
-    function Cobalt(videoUrl, audioOnly = false) {
+    function Cobalt(videoUrl, audioOnly = "auto") {
         // Use Promise because GM.xmlHttpRequest behaves differently with different userscript managers
         return new Promise((resolve, reject) => {
-            // https://github.com/imputnet/cobalt/blob/current/docs/api.md
             GM_xmlhttpRequest({
                 method: 'POST',
-                url: 'https://api.cobalt.tools/api/json',
+                url: '', // basically the cobalt instance api
                 headers: {
                     'Cache-Control': 'no-cache',
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
+                    'User-Agent': '', // don't forget to censor later! I don't want ppl stealing my made up User Agent
+                    'Authorization': '' // def don't forget to censor later (!!!!!!!)
                 },
                 data: JSON.stringify({
-                    url: encodeURI(videoUrl),
-                    vQuality: localStorage.getItem('ytdl-quality') ?? 'max',
-                    filenamePattern: 'basic', // file name = video title
-                    isAudioOnly: audioOnly,
-                    disableMetadata: true, // privacy
+                    url: encodeURI(videoUrl), // pretty obvious
+                    videoQuality: localStorage.getItem('ytdl-quality') ?? 'max', // not sure why we need localStorage for ts but ok ig
+                    filenameStyle: 'basic', // file name = video title - channel name (quality, codec)
+                    downloadMode: audioOnly, // var name is kinda misleading, "auto" for video, "audio" for audio
+                    disableMetadata: true, // idk, it's from the original repo, but is compatible with new API so I'll just leave it there
+                    youtubeVideoCodec: "av1", // av1 is required for higher quality videos like 1440p and 4K
+                    youtubeVideoContainer: "mp4", // mp4 because what the fuck is webm
                 }),
                 onload: (response) => {
                     const data = JSON.parse(response.responseText);
@@ -101,6 +108,17 @@
                 },
                 onerror: (err) => reject(err),
             });
+
+          console.log(JSON.stringify({
+                    url: encodeURI(videoUrl), // pretty obvious
+                    videoQuality: localStorage.getItem('ytdl-quality') ?? 'max', // not sure why we need localStorage for ts but ok ig
+                    filenameStyle: 'basic', // file name = video title - channel name (quality, codec)
+                    downloadMode: audioOnly, // var name is kinda misleading, "auto" for video, "audio" for audio
+                    disableMetadata: true, // idk, it's from the original repo, but is compatible with new API so I'll just leave it there
+                    youtubeVideoCodec: "av1", // av1 is required for higher quality videos like 1440p and 4K
+                    youtubeVideoContainer: "mp4", // mp4 because what the fuck is webm
+                }))
+
         });
     }
 
@@ -125,7 +143,7 @@
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: 'https://raw.githubusercontent.com/madkarmaa/youtube-downloader/main/notifications.json',
+                url: 'https://raw.githubusercontent.com/shaijyy/ytdlbtn/main/notifications.json',
                 headers: {
                     'Cache-Control': 'no-cache',
                     Accept: 'application/json',
@@ -209,11 +227,12 @@
     }
 
     async function updateVideoData(e) {
+        if (!e.detail) return;
         videoDataReady = false;
 
-        const temp_video_data = e.detail?.getVideoData();
-        VIDEO_DATA.video_duration = e.detail?.getDuration();
-        VIDEO_DATA.video_url = e.detail?.getVideoUrl();
+        const temp_video_data = e.detail;
+        VIDEO_DATA.video_duration = temp_video_data?.video_duration;
+        VIDEO_DATA.video_url = temp_video_data?.video_url;
         VIDEO_DATA.video_author = temp_video_data?.author;
         VIDEO_DATA.video_title = temp_video_data?.title;
         VIDEO_DATA.video_id = temp_video_data?.video_id;
@@ -222,15 +241,28 @@
         logger('info', 'Video data updated\n\n', VIDEO_DATA);
     }
 
+    // use unsafeWindow to "bridge" between the youtube context and the userscript
     async function hookPlayerEvent(...fns) {
-        document.addEventListener('yt-player-updated', (e) => {
-            for (let i = 0; i < fns.length; i++) fns[i](e);
-        });
-        logger(
-            'info',
-            'Video player event hooked. Callbacks:\n\n',
-            fns.map((f) => f.name)
-        );
+        const pollAndTrigger = () => {
+            const player = unsafeWindow.document.querySelector('#movie_player');
+
+            if (player && player.getVideoData) {
+                const mockEvent = {
+                    detail: {
+                        video_duration: player.getDuration(),
+                        video_url: player.getVideoUrl(),
+                        ...player.getVideoData()
+                    }
+                };
+
+                for (let i = 0; i < fns.length; i++) {
+                    if (typeof fns[i] === 'function') fns[i](mockEvent);
+                }
+            }
+        };
+
+        unsafeWindow.document.addEventListener('yt-player-updated', pollAndTrigger);
+        unsafeWindow.document.addEventListener('yt-navigate-finish', pollAndTrigger);
     }
 
     async function hookNavigationEvents(...fns) {
@@ -511,7 +543,8 @@
                     await Cobalt(
                         isYtMusic
                             ? window.location.href.replace('music.youtube.com', 'www.youtube.com')
-                            : VIDEO_DATA.video_url
+                            : VIDEO_DATA.video_url,
+                        "auto"
                     ),
                     '_blank'
                 );
@@ -553,7 +586,7 @@
                         isYtMusic
                             ? window.location.href.replace('music.youtube.com', 'www.youtube.com')
                             : VIDEO_DATA.video_url,
-                        true
+                        "audio"
                     ),
                     '_blank'
                 );
@@ -842,10 +875,10 @@
     top: 50vh;
     left: 50vw;
     transform: translate(-50%, -50%);
-    background-color: var(--yt-spec-base-background);
+    background-color: rgb(0,0,0);
     border: 2px solid var(--yt-spec-static-grey);
     border-radius: 8px;
-    color: var(--yt-spec-text-primary);
+    color: #fff;
     z-index: 9999;
     padding: 1.5rem 1.6rem;
     font-family: "Roboto", "Arial", sans-serif;
@@ -867,7 +900,7 @@
 }
 
 .ytdl-notification h2 {
-    color: var(--yt-brand-youtube-red);
+    color: #fff;
 }
 
 .ytdl-notification > div {
