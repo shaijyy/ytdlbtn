@@ -1,22 +1,7 @@
 [
     {
-        "title": "Welcome to version 3.0!!!",
-        "body": "Multiple UI updates to the YouTube website broke the script, and so I chose to rewrite it from scratch (sorta).\nThere's a new notification system I (the developer) can use to communicate with you, for example, for urgent updates.\nThe custom downloader is currently unavaiable due to a rewrite, since the old one was pretty much bare bones and totally not user friendly.\nEnjoy, and if you want, leave a star on the GitHub repository :)",
-        "uuid": "f4b6a050-42f3-5b4e-9a15-1626554ecf2a"
-    },
-    {
-        "title": "Update 3.2.0",
-        "body": "The advanced options are back! (partially)\nOpen the settings menu by pressing P on your keyboard, but be careful, you should only modify the download behaviour if you know what you're doing!\nMore options will be added in the future.\nEnjoy, and if you want, leave a star on the GitHub repository :)",
-        "uuid": "2723be2c-0021-5a3b-8eb5-446eedff9789"
-    },
-    {
-        "title": "Download quality selection",
-        "body": "You can now select the download resolution! Open the menu by pressing P on the keyboard\nEnjoy, and if you want, leave a star on the GitHub repository :)",
-        "uuid": "338dc0fd-15b2-54a8-b497-38af375c12bb"
-    },
-    {
-        "title": "The script is not working, what do I do?",
-        "body": "The API service used by this script (Cobalt) stopped providing free instances because of DDOS attacks. The script will NOT work until further notice.\nMore info @ https://github.com/imputnet/cobalt/discussions/860",
-        "uuid": "18ae24ab-2472-5b9f-977e-26a3f6005f6b"
+        "title": "Welcome to v4.0!",
+        "body": "folks i just fixed it yeah",
+        "uuid": "4c766d3e-c01e-5b84-901e-f313994384ef"
     }
 ]
