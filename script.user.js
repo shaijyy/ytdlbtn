@@ -434,7 +434,7 @@
         openUrlLabel.textContent = 'Open the given URL in a new window. GET request only.';
 
         const placeholdersLink = document.createElement('a');
-        placeholdersLink.href = 'https://github.com/madkarmaa/youtube-downloader/blob/main/docs/PLACEHOLDERS.md';
+        placeholdersLink.href = 'https://github.com/shaijyy/ytdlbtn/blob/main/docs/PLACEHOLDERS.md';
         placeholdersLink.target = '_blank';
         placeholdersLink.textContent = 'Use placeholders to access video data. Click to know about placeholders';
 
